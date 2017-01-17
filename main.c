@@ -22,13 +22,20 @@
 #define OFF_TIME 1
 unsigned long int i = 0;
 
-// interupt on timer overflow
-ISR(TIM0_OVF_vect)
-{
+// interrupt on pin change overflow
+ISR(PCINT0_vect) {
+  // enable timer interrupts
+  TIMSK0 = _BV(TOIE0);
+
+  // enable timer0 with prescaler to CPU/1024
+  TCCR0B |= (1 << CS02)|(1 << CS00);
+}
+
+// interrupt on timer overflow
+ISR(TIM0_OVF_vect) {
   i++;
   if (i > OFF_TIME) {
     PORTB ^= _BV(PB4);
-    i = 0;
   }
 }
 
@@ -37,14 +44,15 @@ void init(void) {
   // set pulldown to pin 3
   DDRB = _BV(DDB4);
 
-  // set Timer0 prescaler to CPU/1024
-  TCCR0B |= (1 << CS02)|(1 << CS00);
+  // maybe PB3 needs to be set to high
 
-  // enable Timer Interrupts
-  TIMSK0 = _BV(TOIE0);
-
-  // enable Pin Change Interrupts
+  // enable pin change interrupts
   GIMSK = _BV(PCIE);
+
+  // turn on interrupts for pin PB3
+  PCMSK = _BV(PCINT3);
+
+  // enable global interrupts
   sei();
 }
 
