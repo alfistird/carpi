@@ -20,7 +20,7 @@
 #include <avr/interrupt.h>
 
 #define OFF_TIME 1
-unsigned long int i = 0;
+static volatile unsigned long int i = 0;
 
 // interrupt on pin change overflow
 ISR(PCINT0_vect) {
@@ -36,6 +36,7 @@ ISR(TIM0_OVF_vect) {
   i++;
   if (i > OFF_TIME) {
     PORTB ^= _BV(PB4);
+    i = 0;
   }
 }
 
@@ -44,7 +45,8 @@ void init(void) {
   // set pulldown to pin 3
   DDRB = _BV(DDB4);
 
-  // maybe PB3 needs to be set to high
+  // PB3 needs to be set to high
+  PORTB = _BV(PB4);
 
   // enable pin change interrupts
   GIMSK = _BV(PCIE);
