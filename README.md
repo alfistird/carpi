@@ -22,42 +22,39 @@ Raspberry CarPC
 
 ----------------------------------------------------------------------------------------------------------------
 
-	Conflicts with DVB-T kernel modules provided by the Linux kernel
+	Conflicts: DVB-T kernel modules provided by the Linux kernel
 
-		Typical error of module conflict:
+	  Typical error of module conflict:
 
-		  Using device 0: ezcap USB 2.0 DVB-T/DAB/FM dongle
+		Using device 0: ezcap USB 2.0 DVB-T/DAB/FM dongle
 
-		  Kernel driver is active, or device is claimed by second instance of librtlsdr.
-		  In the first case, please either detach or blacklist the kernel module
-		  (dvb_usb_rtl28xxu), or enable automatic detaching at compile time.
+	  Kernel driver is active, or device is claimed by second instance of librtlsdr.
+	  In the first case, please either detach or blacklist the kernel module
+	  (dvb_usb_rtl28xxu), or enable automatic detaching at compile time.
 
-		  usb_claim_interface error -6
-		  Failed to open rtlsdr device #0
+		usb_claim_interface error -6
+		Failed to open rtlsdr device #0
 
-	You may decide to blacklist this kernel module by doing (as root):
+	  You may decide to blacklist this kernel module by doing (as root):
 
 		echo "blacklist dvb_usb_rtl28xxu" > \
-		 /etc/modprobe.d/librtlsdr-blacklist.conf
+		/etc/modprobe.d/librtlsdr-blacklist.conf
 
-	Then unplug/plug the USB stick.
+	  Then unplug/plug the USB stick.
 
 ----------------------------------------------------------------------------------------------------------------
 
-	Permissions
+	Permissions:
 
-	If you have permissions issues please install the example udev rules from
-	librtlsdr-0.5.2 folder (as root):
+	  If you have permissions issues please install the example udev rules from librtlsdr-0.5.2 folder (as root):
 
-cp ./rtl-sdr.rules /etc/udev/rules.d/99-librtlsdr.rules
-invoke-rc.d udev reload
-
- 
-
+		cp ./rtl-sdr.rules /etc/udev/rules.d/99-librtlsdr.rules
+		invoke-rc.d udev reload
    
-Development code:
+----------------------------------------------------------------------------------------------------------------
 
-https://github.com/AlwinEsch/pvr.rtl.radiofm
-    Current Branches:
-        - master: Development branch
-        - Isengard: Fixed add-on source for Kodi 15.2, support also Raspberry PI
+	Development code: https://github.com/AlwinEsch/pvr.rtl.radiofm
+
+	  Current Branches:
+		- master: Development branch
+		- Isengard: Fixed add-on source for Kodi 15.2, support also Raspberry PI
