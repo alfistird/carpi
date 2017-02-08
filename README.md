@@ -14,9 +14,9 @@ Raspberry CarPC
 
 		Note: Make sure kodi's add-on depends are present libusb-1.0, libkodiplatform, libplatform and tinyxml):
 
-		# git clone https://github.com/AlwinEsch/pvr.rtl.radiofm
-		# mkdir ./pvr.rtl.radiofm/build
-		# cd ./pvr.rtl.radiofm/build
-		# cmake -DCMAKE_INSTALL_PREFIX=/usr ..
-		# make install
+		// git clone https://github.com/AlwinEsch/pvr.rtl.radiofm
+		// mkdir ./pvr.rtl.radiofm/build
+		// cd ./pvr.rtl.radiofm/build
+		// cmake -DCMAKE_INSTALL_PREFIX=/usr ..
+		// make install
 
