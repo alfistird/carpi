@@ -2,5 +2,54 @@ Install Rasbian with raspbian-jessie-lite image
 
   - https://downloads.raspberrypi.org/raspbian_lite_latest
 
+  # run raspi-config
+	- set password
+	- expand filesystem
 
+  # reboot
 
+  # run raspi-config again
+	- boot options
+		- desktop / cli		console
+
+	- advanced options / update 
+	- localtion options
+		- locales		de_AT ISO-8859-1
+					de_AT.UTF-8 UTF-8
+					de_AT@Euro ISO-8859-1
+					en_US ISO-8859-1
+					en_US ISO-8859-15 ISO-8859-15
+					en_US.UTF-8 UTF-8
+		- default locale	none
+
+	- timezone
+		- geographic area	Europe
+		- time zone		Vienna
+
+	- keyboard config
+		- keyboard model	Generic 105-key (Intl) PC
+		- keyboard origin	German (Austria)
+		- AltGr function	default
+		- compose key		no compose key
+
+	- Wi-fi contry			AT Austria
+
+	- interfaceing options
+		- camera enabled	no
+		- SSH enabled		yes
+		- VNC enabled		no
+		- SPI enabled		no		
+		- I2C enabled		no		
+		- serial enabled	no		
+		- 1-wire enabled	no		
+		- GPIO Server enabled	no		
+
+	- advanced options
+		- overscan 		no
+		- hostname		set hostname
+		- memory slit		128
+		- audio			force HDMI
+		- reolution		CEA Mode 4 1280x720 60Hz 16:9
+		- GL driver		no
+
+  # reboot
