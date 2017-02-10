@@ -1,0 +1,6 @@
+Install Rasbian with raspbian-jessie-lite image
+
+  - https://downloads.raspberrypi.org/raspbian_lite_latest
+
+
+
