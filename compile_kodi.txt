@@ -18,7 +18,11 @@
 ## libavahi
  - apt-get install libavahi-common3 libavahi-common-dev libavahi-client3 libavahi-client-dev -y
 
+####
 #### Build and install kodi
+
+## create source direcoty
+ - mkdir /opt/src-carpc && cd /opt/src-carpc
 
 ## git checkout
  - git clone https://github.com/holzingerm/xbmc.git xbmc-holzingerm
@@ -47,7 +51,6 @@
 ### takes some time due building ffmpeg (about 20 minutes),
 ### if you don't want to control kodi with your tv remote, remove '--enable-libcec'
 ### if using newclock4 branch, use 'with-platform=raspberry-pi2' (instead of ..-pi)
-
 
 ./configure \
 --prefix=/opt/carpc \
