@@ -23,6 +23,9 @@
 
 ## libusb
  - apt-get install libusb++-dev libusb-1.0-0-dev libusbprog-dev libusbredirhost-dev libusbredirparser-dev -y
+
+## libav
+ - apt-get libavformat56 libavformat-dev libavfilter5 libavfilter-dev -y
 ####
 #### Build and install kodi
 
@@ -40,10 +43,10 @@
  - ./bootstrap
 
 ## install LIBDCADEV
- - cd tools/depends/target/libdcadec && make PREFIX=/usr/local -j4 && cd -
+ - make -C tools/depends/target/libdcadec PREFIX=/usr/local
 
 ## install libcrossguid
- - cd tools/depends/target/crossguid && make PREFIX=/usr/local -j4 && cd -
+ - make -C tools/depends/target/crossguid PREFIX=/usr/local
 
 ### run '~/xbmc/configure' with new compiler flags for pi 2 
 ### takes some time due building ffmpeg (about 20 minutes),
@@ -155,6 +158,14 @@ make -j3
   prefix:	/opt/carpc
 ------------------------
 
+
+##################################################################################
+## install kodi-platform
+
+git clone https://github.com/xbmc/kodi-platform.git
+cd kodi-platform
+cmake -DCMAKE_INSTALL_PREFIX=/usr/local
+make && sudo make install
 
 ##################################################################################
 original source: https://drive.google.com/file/d/0B8nSlx6Q6IoQb2gzLTJQRXlCdzA/view
