@@ -54,7 +54,7 @@
 
 ./configure \
 --prefix=/opt/carpc \
---disable-shared-lib \
+--enable-shared-lib \
 --enable-debug \
 --enable-optimizations \
 --disable-gl \
@@ -78,7 +78,7 @@
 --disable-webserver \
 --disable-optical-drive \
 --disable-libbluray \
---enable-texturepacker \
+--disable-texturepacker \
 --enable-lirc \
 --enable-libusb \
 --enable-libbluetooth \
@@ -102,7 +102,92 @@ make -j3
 
 
 
-##########################################################################################################################
+###############################################################################
+###############################################################################
+
+#### this was done on a fresh 2015-05-05-raspbian.img, internet connection required
+#### this is quite exhausting for your sdcard; only of concern when compiling often I would say (compiling and git cloning about 30 times from scratch did destroy one old micro sdcard of me)
+
+## install some libs and new compiler
+sudo apt-get update
+
+sudo apt-get install libboost1.50-all swig curl libgnutls-dev libxml2-dev libxslt1-dev libfreetype6-dev libfontconfig1-dev libfribidi-dev libmpeg2-4-dev libmad0-dev libjpeg8-dev libsamplerate0-dev libogg-dev libvorbis-dev libflac-dev libtiff4-dev liblzo2-dev cmake zip unzip libsqlite3-dev libpng12-dev libpcre3-dev libjasper-dev libsdl1.2-dev libsdl-image1.2-dev libass-dev libmodplug-dev libcdio-dev libtinyxml2-dev libyajl-dev libgpg-error-dev libgcrypt11-dev libmicrohttpd-dev autoconf libtool autopoint libudev-dev python-dev python-imaging libmysqlclient-dev libcurl4-gnutls-dev libbz2-dev libtinyxml-dev libssh-dev libxrandr-dev libsmbclient-dev libcap-dev gawk gperf debhelper libiso9660-dev liblockdev1-dev ccache gcc-4.8 g++-4.8
+
+## setup new compiler as default for convenience (pre-installed 4.6 does not support cortex-a7 and neon stuff) 
+sudo rm /usr/bin/gcc
+sudo rm /usr/bin/g++
+
+sudo ln -s /usr/bin/gcc-4.8 /usr/bin/gcc
+sudo ln -s /usr/bin/g++-4.8 /usr/bin/g++
+
+# check version of compilers, should return 4.8 for both
+echo; gcc --version; echo; g++ --version; 
+
+## if you need to go back to preinstalled gcc-4.6 and g++-4.6 just replace 4.8 with 4.6 and run again
+
+#### now decide which source code of kodi we download to compile
+## 1) official kodi 15 Isengard
+git clone -b Isengard git://github.com/xbmc/xbmc.git
+
+## alternatives are:
+# 2) this is Kodi 15 alpha with newest raspberry pi (2) fixes from popcornmix, which is also used for openelec testbuilds, BUT need special libcec AND kodi sould be build with dependencies!
+git clone -b newclock4 https://github.com/popcornmix/xbmc.git
+## 3)  official master branch, atm kodi 16 alpha
+#git clone git://github.com/xbmc/xbmc.git
+
+#### build new libcec required for kodi (if you don't want to control kodi with your tv remote, skip this)
+## for 'bleeding edge' popcornmix newclock4 branch of kodi use 'git clone -b libcec-2.2.0 https://github.com/popcornmix/libcec.git' or build kodi with dependencies
+## this is official libcec:
+git clone --recursive git://github.com/Pulse-Eight/libcec.git
+
+##build libplatform
+cd libcec/src/platform
+mkdir build
+cd build
+cmake ..
+make
+sudo make install
+cd
+
+##build libcec
+cd libcec
+mkdir build
+cd build
+cmake -DRPI_INCLUDE_DIR=/opt/vc/include -DRPI_LIB_DIR=/opt/vc/lib ..
+make -j4
+sudo make install
+cd
+
+#### do yourself a favor and do not install libtag-dev from (wheezy/raspbian) repo, ./configure likes (very old) libtag from repo, but it breaks the build
+#### more info http://forum.kodi.tv/showthread.php?tid=143269 
+#### instead build included libtag
+cd xbmc/lib/taglib
+make -j4
+sudo make install
+cd
+
+#### Build and install kodi
+## prepare compilation, generate configure files, etc.
+cd xbmc
+./bootstrap
+
+## in case we did something wrong before and need to re-run bootstrap or want an 'untouched' ~/xbmc folder, run inside ~/xbmc :
+# git clean -xfd && git reset --hard
+
+### run '~/xbmc/configure' with new compiler flags for pi 2 
+### takes some time due building ffmpeg (about 20 minutes),
+### if you don't want to control kodi with your tv remote, remove '--enable-libcec'
+### if using newclock4 branch, use 'with-platform=raspberry-pi2' (instead of ..-pi)
+CFLAGS="-I/opt/vc/include/ -I/opt/vc/include/interface/vcos/pthreads -I/opt/vc/include/interface/vmcs_host/linux -mfloat-abi=hard -mcpu=cortex-a7 -mfpu=neon-vfpv4" CXXFLAGS="-I/opt/vc/include/ -I/opt/vc/include/interface/vcos/pthreads -I/opt/vc/include/interface/vmcs_host/linux -mfloat-abi=hard -mcpu=cortex-a7 -mfpu=neon-vfpv4" LDFLAGS="-L/opt/vc/lib" FFMPEG_OPTS="--cpu=cortex-a7" ./configure --disable-gl --enable-gles --with-platform=raspberry-pi --disable-x11 --disable-vaapi --disable-vdpau --disable-avahi --enable-libcec --disable-pulse --disable-projectm --disable-optical-drive --disable-dvdcss --disable-vtbdecoder --enable-alsa --enable-player=omxplayer
+
+# 'FFMPEG_OPTS="use-cpu=cortex-a7"' prevents ffmpeg from auto-selecting '-march=armv7-a' which doesn't like '-mcpu=cortex-a7'
+
+## compiling only on 3 cores, takes 1- 2 hours, seems more stable; set -j4 to use all 4 cores etc. but ssh/wifi/etc may break or the pi will simply run out of memory
+## you have to deceide, eg. building over night just use 'make -j1' - it will run through
+## just run again, as long as it compiles it is much faster but you have to re-run 'make' again, I would suggest lowering '-jX' evrytime this happens 
+## maybe we should increase swapfile for that. Read/Write on sdcard vs multi-cores; who wins? :-)
+make -j3
+
 ## and install
 sudo make install
 ###
