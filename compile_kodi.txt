@@ -100,3 +100,69 @@ CXXFLAGS="-I/opt/vc/include/ -I/opt/vc/include/interface/vcos/pthreads -I/opt/vc
 ## maybe we should increase swapfile for that. Read/Write on sdcard vs multi-cores; who wins? :-)
 make -j3
 
+
+
+##########################################################################################################################
+## and install
+sudo make install
+###
+
+## make keyboard work for non-root eg inside search-fields for user 'pi'
+sudo usermod -aG tty pi
+sudo su -c 'echo "KERNEL==\"tty[0-9]*\", GROUP=\"tty\", MODE=\"0660\"" >> /etc/udev/rules.d/99-input.rules'
+
+## make basic start script, TODO ideally stop lightdm before kodi starts and probably much more needed
+## you need to run 'fbset -depth 8 && fbset -depth 16' after exiting kodi, else blank screen only
+## create very basic script called 'startkodi'
+sudo su -c 'echo "kodi" >> /usr/local/bin/startkodi'
+sudo su -c 'echo "fbset -depth 8 && fbset -depth 16" >> /usr/local/bin/startkodi'
+sudo chmod +x /usr/local/bin/startkodi
+
+###### give gpu more ram now that we actually want to run kodi ###### 
+grep -q '^gpu_mem=' /boot/config.txt && sudo sed -i '/^gpu_mem=/c gpu_mem=128' /boot/config.txt || sudo echo 'gpu_mem=128' >> /boot/config.txt
+## reboot
+sudo reboot
+
+## use 'startkodi' to start kodi
+
+## how to update kodi:
+cd xbmc
+git clean -xfd
+git reset --hard
+git pull --rebase
+## build and install again with 'bootstrap, configure, make, make install' the same way you did before 
+
+###********** TODO: **********************************************************************************************
+### start/stop script for kodi, run as a service? 
+### double check configure settings
+### TODO use gcc 4.9 (not in wheezy/raspbian repo) and -march=armv7ve  [not really needed]
+
+#************ some additional info *******************************************************************************
+## according to http://community.arm.com/groups/tools/blog/2013/04/15/arm-cortex-a-processors-and-gcc-command-lines
+## ideally we would use '-mcpu=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard' everywhere
+## when we use -mcpu=cortex-a7 it conflicts with ffmpeg, which automatically selects -march=armv7-a, I really don't want to mess with configure files of ffmpeg # solved?
+## they probably do this for good reason. If I understand https://gcc.gnu.org/onlinedocs/gcc/ARM-Options.html correctly, march+mtune would override mcpu
+## simple compile test shows that described behaviour
+## so we could use whatever we think is best for kodi, and ffmpeg overrides it nontheless (but who knows - conflicting compiler messages do not look healthy)
+## I guess this will be fixed in near future # yes it will be with gcc4.9 and -march=armv7e
+
+## other possibility would be to use different flags, eg -march=amv7-a instead of -mcpu=cortex-a7
+## more about 'march vs mcpu': http://forum.dlang.org/thread/mailman.1900.1380733301.1719.digitalmars-d-ldc@puremagic.com
+
+#************ obsolete stuff?!************************************************************************************
+## is this still needed when compiling on the pi itself? hopefully not :-D
+## very confusing with hardcoded armv6 cflags in tools/buildsteps/rbpi/configure-depends and somewehere else I forgot
+## we build locally
+#sed -i 's/USE_BUILDROOT=1/USE_BUILDROOT=0/' tools/rbp/setup-sdk.sh
+#sed -i 's/TOOLCHAIN=\/usr\/local\/bcm-gcc/TOOLCHAIN=\/usr/' tools/rbp/setup-sdk.sh
+#sudo sh tools/rbp/setup-sdk.sh
+
+## this disables that configure will run automatically with pre-configured values, so we can have fun with them later :-)
+#sed -i 's/cd $(SOURCE); $(CONFIGURE)/#cd $(SOURCE); $(CONFIGURE)/' tools/rbp/depends/xbmc/Makefile 
+
+##this will run bootstrap and build some stuff
+#make -C tools/rbp/depends/xbmc/
+*******************************************************************************************************************
+
+### old configure, compiler flags for pi 2, taken from https://github.com/archlinuxarm/PKGBUILDs/blob/master/alarm/kodi-rbp/PKGBUILD
+##CFLAGS="-Ofast -fexcess-precision=fast -mfloat-abi=hard -mabi=aapcs-linux -pipe -fstack-protector --param=ssp-buffer-size=4 -D_FORTIFY_SOURCE=1 -I/opt/vc/include/ -I/opt/vc/include/interface/vcos/pthreads -I/opt/vc/include/interface/vmcs_host/linux -mcpu=cortex-a7 -mtune=cortex-a7 -mfpu=neon-vfpv4 -mvectorize-with-neon-quad" CXXFLAGS="-Ofast -fexcess-precision=fast -mfloat-abi=hard -mabi=aapcs-linux -pipe -fstack-protector --param=ssp-buffer-size=4 -D_FORTIFY_SOURCE=1 -I/opt/vc/include/ -I/opt/vc/include/interface/vcos/pthreads -I/opt/vc/include/interface/vmcs_host/linux -mcpu=cortex-a7 -mtune=cortex-a7 -mfpu=neon-vfpv4 -mvectorize-with-neon-quad" LDFLAGS="-L/opt/vc/lib" ./configure --disable-gl --enable-gles --with-platform=raspberry-pi --disable-x11 --disable-vaapi --disable-vdpau --disable-avahi --enable-libcec --disable-pulse --disable-projectm --disable-optical-drive --disable-dvdcss --disable-vtbdecoder --enable-alsa --enable-player=omxplayer --enable-ccache
