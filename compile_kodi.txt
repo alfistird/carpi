@@ -24,14 +24,14 @@
 ## create source direcoty
  - mkdir /opt/src-carpc && cd /opt/src-carpc
 
-## git checkout
- - git clone https://github.com/holzingerm/xbmc.git xbmc-holzingerm
+## git checkout holzingerm fork of https://github.com/xbmc/xbmc.git
+ - git clone https://github.com/holzingerm/xbmc.git
 
-### in case we did something wrong before and need to re-run bootstrap or want an 'untouched' xbmc-holzingerm folder, run inside xbmc-holzingerm :
+### in case we did something wrong before and need to re-run bootstrap or want an 'untouched' xbmc folder, run inside xbmc :
  - git clean -xfd && git reset --hard
 
 ## prepare compilation, generate configure files, etc.
- - cd xbmc-holzingerm
+ - cd xbmc
  - ./bootstrap
 
 ## prepare ld.so.conf
