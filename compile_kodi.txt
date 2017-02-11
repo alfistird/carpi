@@ -102,8 +102,9 @@ make -j3
 
 
 
-###############################################################################
-###############################################################################
+##################################################################################
+original source: https://drive.google.com/file/d/0B8nSlx6Q6IoQb2gzLTJQRXlCdzA/view
+##################################################################################
 
 #### this was done on a fresh 2015-05-05-raspbian.img, internet connection required
 #### this is quite exhausting for your sdcard; only of concern when compiling often I would say (compiling and git cloning about 30 times from scratch did destroy one old micro sdcard of me)
