@@ -1,0 +1,99 @@
+#### install debendencies to build kodi
+
+## dependencies from repo
+ - apt-get install libboost1.55-all-dev libboost1.55-tools-dev swig curl libgnutls28-dev libxml2-dev libxslt1-dev libfreetype6-dev libfontconfig1-dev libfribidi-dev libmpeg2-4-dev libmpeg3-dev libmad0-dev libjpeg-dev libsamplerate0-dev libogg-dev libvorbis-dev libflac-dev libtiff5-dev liblzo2-dev cmake zip unzip libsqlite3-dev libpng12-dev libpcre3-dev libjasper-dev libsdl1.2-dev libsdl-image1.2-dev libass-dev libmodplug-dev libcdio-dev libtinyxml2-dev libyajl-dev libgpg-error-dev libgcrypt11-dev libgcrypt20-dev libmicrohttpd-dev autoconf libtool autopoint libudev-dev python-dev python-imaging libmysqlclient-dev libcurl4-gnutls-dev libbz2-dev libtinyxml-dev libssh-dev libxrandr-dev libsmbclient-dev libcap-dev gawk gperf debhelper libiso9660-dev liblockdev1-dev ccache gcc-4.8 g++-4.8 uuid uuid-dev -y 
+
+## libbluetooth
+ - apt-get install libbluetooth3 libbluetooth-dev -y
+
+## libcec - when cec is needed to TV
+ - apt-get install libcec3 libcec-dev
+
+## taglib
+ - apt-get install libtag1-dev libtagc0 libtagc0-dev libtag-extras1 libtag-extras-dev libtaglib2.1-cil libtaglib-cil-dev -y
+
+## dca
+ - apt-get install libdca0 libdca-dev libdca-utils -y
+
+## libavahi
+ - apt-get install libavahi-common3 libavahi-common-dev libavahi-client3 libavahi-client-dev -y
+
+#### Build and install kodi
+
+## git checkout
+ - git clone https://github.com/holzingerm/xbmc.git xbmc-holzingerm
+
+### in case we did something wrong before and need to re-run bootstrap or want an 'untouched' xbmc-holzingerm folder, run inside xbmc-holzingerm :
+ - git clean -xfd && git reset --hard
+
+## prepare compilation, generate configure files, etc.
+ - cd xbmc-holzingerm
+ - ./bootstrap
+
+## prepare ld.so.conf
+ - echo "/opt/carpc/lib" > /etc/ld.so.conf.d/carpc.conf
+
+## install LIBDCADEV
+ - cd tools/depends/target/libdcadec
+ - make PREFIX=/usr/local -j4
+ - ldconfig
+
+## install libcrossguid
+ - cd tools/depends/target/crossguid
+ - make PREFIX=/usr/local -j4
+ - ldconfig
+
+### run '~/xbmc/configure' with new compiler flags for pi 2 
+### takes some time due building ffmpeg (about 20 minutes),
+### if you don't want to control kodi with your tv remote, remove '--enable-libcec'
+### if using newclock4 branch, use 'with-platform=raspberry-pi2' (instead of ..-pi)
+
+
+./configure \
+--prefix=/opt/carpc \
+--disable-shared-lib \
+--enable-debug \
+--enable-optimizations \
+--disable-gl \
+--enable-gles \
+--disable-profiling \
+--disable-x11 \
+--enable-ccache \
+--enable-alsa \
+--disable-dbus \
+--disable-pulse \
+--enable-ssh \
+--disable-rtmp \
+--enable-samba \
+--enable-nfs \
+--enable-upnp \
+--disable-mid \
+--disable-avahi \
+--disable-mdnsembedded \
+--enable--non-free \
+--enable-mysql \
+--disable-webserver \
+--disable-optical-drive \
+--disable-libbluray \
+--enable-texturepacker \
+--enable-lirc \
+--enable-libusb \
+--enable-libbluetooth \
+--enable-player=omxplayer \
+--with-platform=raspberry-pi2 \
+\
+CFLAGS="-I/opt/vc/include/ -I/opt/vc/include/interface/vcos/pthreads -I/opt/vc/include/interface/vmcs_host/linux -mfloat-abi=hard -mcpu=cortex-a7 -mfpu=neon-vfpv4" \
+\
+LDFLAGS="-L/opt/vc/lib" FFMPEG_OPTS="--cpu=cortex-a7" \
+\
+CXXFLAGS="-I/opt/vc/include/ -I/opt/vc/include/interface/vcos/pthreads -I/opt/vc/include/interface/vmcs_host/linux -mfloat-abi=hard -mcpu=cortex-a7 -mfpu=neon-vfpv4"
+
+
+# 'FFMPEG_OPTS="use-cpu=cortex-a7"' prevents ffmpeg from auto-selecting '-march=armv7-a' which doesn't like '-mcpu=cortex-a7'
+
+## compiling only on 3 cores, takes 1- 2 hours, seems more stable; set -j4 to use all 4 cores etc. but ssh/wifi/etc may break or the pi will simply run out of memory
+## you have to deceide, eg. building over night just use 'make -j1' - it will run through
+## just run again, as long as it compiles it is much faster but you have to re-run 'make' again, I would suggest lowering '-jX' evrytime this happens 
+## maybe we should increase swapfile for that. Read/Write on sdcard vs multi-cores; who wins? :-)
+make -j3
+
