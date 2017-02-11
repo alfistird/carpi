@@ -73,7 +73,6 @@
 --disable-mid \
 --disable-avahi \
 --disable-mdnsembedded \
---enable--non-free \
 --enable-mysql \
 --disable-webserver \
 --disable-optical-drive \
@@ -90,6 +89,60 @@ CFLAGS="-I/opt/vc/include/ -I/opt/vc/include/interface/vcos/pthreads -I/opt/vc/i
 LDFLAGS="-L/opt/vc/lib" FFMPEG_OPTS="--cpu=cortex-a7" \
 \
 CXXFLAGS="-I/opt/vc/include/ -I/opt/vc/include/interface/vcos/pthreads -I/opt/vc/include/interface/vmcs_host/linux -mfloat-abi=hard -mcpu=cortex-a7 -mfpu=neon-vfpv4"
+
+------------------------
+  Kodi Configuration:
+------------------------
+  Kodi Version:	17.0-ALPHA1
+  git Rev.:	20160328-a0b4eee
+ Shared lib	Yes
+  Debugging:	Yes
+  Profiling:	No
+  Optimization:	Yes
+  SWIG Available:	Yes
+  JRE Available:	Yes
+  Doxygen Available:	Yes
+  Crosscomp.:	No
+  target ARCH:	arm
+  target CPU:	cortex-a7
+  OpenGLES:	Yes
+  ALSA:		Yes
+  DBUS:		No
+  VDPAU:	No
+  VAAPI:	No
+  VTBDecoder:	No
+  OpenMax:	No
+  X11:		No
+  Bluray:	No
+  TexturePacker:No
+  MID Support:	No
+  ccache:	Yes
+  ALSA Support:	Yes
+  PulseAudio:	No
+  Google Test Framework Configured:	Yes
+  Google Breakpad Configured:	No
+  Avahi:	No
+  mDNSEmbedded:	No
+  Non-free:	Yes
+  MySQL:	Yes
+  Webserver:	No
+  libssh support:	Yes
+  libRTMP support:	No
+  libsmbclient support:	Yes
+  libnfs client support:Yes
+  AirPlay support:	Yes
+  AirTunes support:	No
+  UPnP support:		Yes
+  Optical drive:	No
+  libudev support:	Yes
+  libusb support:	No
+  libcec support:	Yes
+  libbluetooth support:	Yes
+  libcap support:	Yes
+  additional players:	Yes, omxplayer
+  additional codecs:	No
+  prefix:	/opt/carpc
+------------------------
 
 
 # 'FFMPEG_OPTS="use-cpu=cortex-a7"' prevents ffmpeg from auto-selecting '-march=armv7-a' which doesn't like '-mcpu=cortex-a7'
