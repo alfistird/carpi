@@ -19,33 +19,37 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 
-#define OFF_TIME 1
-static volatile unsigned long int i = 0;
+#define OFF_TIME 30
+static volatile unsigned long int count = 0;
 
-// interrupt on pin change overflow
+// interrupt on pin change
 ISR(PCINT0_vect) {
-  // enable timer interrupts
-  TIMSK0 = _BV(TOIE0);
+  if ((PINB & (1 << PB3)) == 0) {
+    // enable timer interrupts
+    TIMSK0 = _BV(TOIE0);
 
-  // enable timer0 with prescaler to CPU/1024
-  TCCR0B |= (1 << CS02)|(1 << CS00);
+    // enable timer0 with prescaler to CPU/1024
+    TCCR0B = _BV(CS02)|_BV(CS00);
+  }
 }
 
 // interrupt on timer overflow
 ISR(TIM0_OVF_vect) {
-  i++;
-  if (i > OFF_TIME) {
+  count++;
+  if (count > OFF_TIME) {
     PORTB ^= _BV(PB4);
-    i = 0;
+    count = 0;
+    TIMSK0 = 0;
+    /* GIMSK = 0; */
   }
 }
 
 // startup function
 void init(void) {
-  // set pulldown to pin 3
+  // disable pullup on pin 3
   DDRB = _BV(DDB4);
 
-  // PB3 needs to be set to high
+  // pin 3 needs to be set to high
   PORTB = _BV(PB4);
 
   // enable pin change interrupts
