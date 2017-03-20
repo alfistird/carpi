@@ -8,7 +8,7 @@ PROGRAMMER ?= stk500v2
 BITCLOCK ?= 50
 FUSES ?= -U lfuse:w:0x69:m -U hfuse:w:0xFF:m # 4.8 MHz
 
-CFLAGS += -gdwarf-2 -Ofast -std=gnu99 -funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums -Wall -Werror -Wextra -pedantic -maccumulate-args -mcall-prologues -mint8 -mrelax
+CFLAGS += -gdwarf-2 -Os -std=gnu99 -funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums -Wall -Werror -Wextra -pedantic -maccumulate-args -mcall-prologues -mint8 -mrelax
 LDFLAGS += -gdwarf-2
 LDLIBS += -lm
 
