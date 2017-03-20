@@ -26,8 +26,7 @@ $(BIN).elf: $(OBJ)
 %.o: %.c
 	avr-gcc -c -mmcu=$(MCU) $(CFLAGS) $< -o $@
 
-.PHONY: flash
-flash:
+flash: all
 	avr-objcopy -O ihex -R .eeprom -R .fuse -R .lock -R .signature -j .text -j .data $(BIN).elf $(BIN).hex
 	avrdude -p $(MCU) -P $(PORT) -c $(PROGRAMMER) -U flash:w:$(BIN).hex -B $(BITCLOCK)
 
@@ -36,4 +35,4 @@ fuses:
 	avrdude -p $(MCU) -P $(PORT) -c $(PROGRAMMER) $(FUSES)
 
 clean:
-	-rm $(OBJ) $(DEP) $(patsubst %,$(BIN).%, elf hex)
+	$(RM) $(OBJ) $(DEP) $(patsubst %,$(BIN).%, elf hex)
