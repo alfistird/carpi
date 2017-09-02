@@ -1,7 +1,7 @@
 #### install debendencies to build kodi
 
 ## dependencies from repo
- - apt-get install libboost1.55-all-dev libboost1.55-tools-dev swig curl libgnutls28-dev libxml2-dev libxslt1-dev libfreetype6-dev libfontconfig1-dev libfribidi-dev libmpeg2-4-dev libmpeg3-dev libmad0-dev libjpeg-dev libsamplerate0-dev libogg-dev libvorbis-dev libflac-dev libtiff5-dev liblzo2-dev cmake zip unzip libsqlite3-dev libpng12-dev libpcre3-dev libjasper-dev libsdl1.2-dev libsdl-image1.2-dev libass-dev libmodplug-dev libcdio-dev libtinyxml2-dev libyajl-dev libgpg-error-dev libgcrypt11-dev libgcrypt20-dev libmicrohttpd-dev autoconf libtool autopoint libudev-dev python-dev python-imaging libmysqlclient-dev libcurl4-gnutls-dev libbz2-dev libtinyxml-dev libssh-dev libxrandr-dev libsmbclient-dev libcap-dev gawk gperf debhelper libiso9660-dev liblockdev1-dev ccache gcc-4.8 g++-4.8 uuid uuid-dev -y 
+ - apt-get install libboost1.55-all-dev libboost1.55-tools-dev swig curl libgnutls28-dev libxml2-dev libxslt1-dev libfreetype6-dev libfontconfig1-dev libfribidi-dev libmpeg2-4-dev libmpeg3-dev libmad0-dev libjpeg-dev libsamplerate0-dev libogg-dev libvorbis-dev libflac-dev libtiff5-dev liblzo2-dev cmake zip unzip libsqlite3-dev libpng12-dev libpcre3-dev libjasper-dev libsdl1.2-dev libsdl-image1.2-dev libass-dev libmodplug-dev libcdio-dev libtinyxml2-dev libyajl-dev libgpg-error-dev libgcrypt11-dev libgcrypt20-dev libmicrohttpd-dev autoconf libtool autopoint libudev-dev python-dev python-imaging libmysqlclient-dev libcurl4-gnutls-dev libbz2-dev libtinyxml-dev libssh-dev libxrandr-dev libsmbclient-dev libcap-dev gawk gperf debhelper libiso9660-dev liblockdev1-dev ccache gcc-4.8 g++-4.8 uuid uuid-dev doxygen doxygen-gui -y 
 
 ## libbluetooth
  - apt-get install libbluetooth3 libbluetooth-dev -y
@@ -25,7 +25,7 @@
  - apt-get install libusb++-dev libusb-1.0-0-dev libusbprog-dev libusbredirhost-dev libusbredirparser-dev -y
 
 ## libav
- - apt-get libavformat56 libavformat-dev libavfilter5 libavfilter-dev -y
+ - apt-get install libavformat56 libavformat-dev libavfilter5 libavfilter-dev -y
 ####
 #### Build and install kodi
 
@@ -33,7 +33,8 @@
  - mkdir /opt/src-carpc && cd /opt/src-carpc
 
 ## git checkout holzingerm fork of https://github.com/xbmc/xbmc.git
- - git clone https://github.com/holzingerm/xbmc.git
+ - git clone https://github.com/alfistird/xbmc-holzingerm.git -b Isengard_CarPC xbmc-15	# for Kodi 15.2
+ - git clone https://github.com/alfistird/xbmc-holzingerm.git -b master_CarPC xbmc-16	# for Kodi 16
 
 ### in case we did something wrong before and need to re-run bootstrap or want an 'untouched' xbmc folder, run inside xbmc :
  - git clean -xfd && git reset --hard
@@ -42,74 +43,59 @@
  - cd xbmc
  - ./bootstrap
 
-## install LIBDCADEV
- - make -C tools/depends/target/libdcadec PREFIX=/usr/local
-
-## install libcrossguid
- - make -C tools/depends/target/crossguid PREFIX=/usr/local
-
+## install libcr
 ### run '~/xbmc/configure' with new compiler flags for pi 2 
 ### takes some time due building ffmpeg (about 20 minutes),
 ### if you don't want to control kodi with your tv remote, remove '--enable-libcec'
 ### if using newclock4 branch, use 'with-platform=raspberry-pi2' (instead of ..-pi)
 ### 'FFMPEG_OPTS="use-cpu=cortex-a7"' prevents ffmpeg from auto-selecting '-march=armv7-a' which doesn't like '-mcpu=cortex-a7'
 
-./configure \
---prefix=/opt/carpc \
---enable-shared-lib \
---enable-debug \
---enable-optimizations \
---disable-gl \
---enable-gles \
---disable-profiling \
---disable-x11 \
---enable-ccache \
---enable-alsa \
---disable-dbus \
---disable-pulse \
---enable-ssh \
---disable-rtmp \
---enable-samba \
---enable-nfs \
---enable-upnp \
---disable-mid \
---disable-avahi \
---disable-mdnsembedded \
---enable-mysql \
---disable-webserver \
---disable-optical-drive \
---disable-libbluray \
---disable-texturepacker \
---enable-lirc \
---enable-libusb \
---enable-libbluetooth \
---enable-player=omxplayer \
---with-platform=raspberry-pi2 \
---enable-shared \
---enable-static \
-\
+## Kodi 15.2 configure
 FFMPEG_OPTS="--cpu=cortex-a7" \
 \
 LDFLAGS="-L/opt/vc/lib" \
 \
 CFLAGS="-I/opt/vc/include/ -I/opt/vc/include/interface/vcos/pthreads -I/opt/vc/include/interface/vmcs_host/linux -mfloat-abi=hard -mcpu=cortex-a7 -mfpu=neon-vfpv4" \
 \
-CXXFLAGS="-I/opt/vc/include/ -I/opt/vc/include/interface/vcos/pthreads -I/opt/vc/include/interface/vmcs_host/linux -mfloat-abi=hard -mcpu=cortex-a7 -mfpu=neon-vfpv4"
+CXXFLAGS="-I/opt/vc/include/ -I/opt/vc/include/interface/vcos/pthreads -I/opt/vc/include/interface/vmcs_host/linux -mfloat-abi=hard -mcpu=cortex-a7 -mfpu=neon-vfpv4" \
+\
+./configure \
+--prefix=/opt/carpc \
+--enable-debug \
+--enable-optimizations \
+--disable-libcec \
+--disable-gl \
+--enable-gles \
+--enable-vdpau \
+--enable-vaapi \
+--disable-profiling \
+--disable-rsxs \
+--disable-fishbmc \
+--disable-projectm \
+--disable-x11 \
+--enable-ccache \
+--enable-alsa \
+--disable-dbus \
+--disable-pulse \
+--enable-ssh \
+--enable-samba \
+--enable-nfs \
+--enable-upnp \
+--disable-avahi \
+--enable-mysql \
+--disable-webserver \
+--disable-optical-drive \
+--enable-lirc \
+--enable-libusb \
+--enable-player=omxplayer \
+--with-platform=raspberry-pi
 
-## compiling only on 3 cores, takes 1- 2 hours, seems more stable; set -j4 to use all 4 cores etc. but ssh/wifi/etc may break or the pi will simply run out of memory
-## you have to deceide, eg. building over night just use 'make -j1' - it will run through
-## just run again, as long as it compiles it is much faster but you have to re-run 'make' again, I would suggest lowering '-jX' evrytime this happens 
-## maybe we should increase swapfile for that. Read/Write on sdcard vs multi-cores; who wins? :-)
-make -j3
-
-
-## configure output
+## Kodi 15.2 configuration
 ------------------------
   Kodi Configuration:
 ------------------------
-  Kodi Version:	17.0-ALPHA1
-  git Rev.:	20160328-a0b4eee
- Shared lib	Yes
+  Kodi Version:	15.2
+  git Rev.:	20151111-2e62818
   Debugging:	Yes
   Profiling:	No
   Optimization:	Yes
@@ -118,45 +104,382 @@ make -j3
   Doxygen Available:	Yes
   Crosscomp.:	No
   target ARCH:	arm
-  target CPU:	cortex-a7
+  target CPU:	arm1176jzf-s
   OpenGLES:	Yes
   ALSA:		Yes
   DBUS:		No
-  VDPAU:	Yes
-  VAAPI:	Yes
+  VDPAU:	No
+  VAAPI:	No
   VTBDecoder:	No
   OpenMax:	No
+  Joystick:	No
+  Waveform:	Yes
+  Spectrum:	Yes
+  GOOM:		No
+  RSXS:		No
+  FishBMC:	No
+  ProjectM:	No
+  Touch skin:	No
   X11:		No
+  Wayland:	No
   Bluray:	No
   TexturePacker:No
   MID Support:	No
   ccache:	Yes
   ALSA Support:	Yes
   PulseAudio:	No
+  DVDCSS:	Yes
   Google Test Framework Configured:	Yes
   Google Breakpad Configured:	No
   Avahi:	No
   mDNSEmbedded:	No
   Non-free:	Yes
+  ASAP Codec:	No
   MySQL:	Yes
   Webserver:	No
   libssh support:	Yes
   libRTMP support:	No
   libsmbclient support:	Yes
   libnfs client support:Yes
-  AirPlay support:	Yes
+  AirPLay support:	No
   AirTunes support:	No
   UPnP support:		Yes
   Optical drive:	No
   libudev support:	Yes
   libusb support:	No
   libcec support:	Yes
-  libbluetooth support:	Yes
   libcap support:	Yes
   additional players:	Yes, omxplayer
   additional codecs:	No
   prefix:	/opt/carpc
 ------------------------
+
+## Kodi 16
+#sed -i 's/USE_BUILDROOT=1/USE_BUILDROOT=0/' tools/rbp/setup-sdk.sh
+#sed -i 's/TOOLCHAIN=\/usr\/local\/bcm-gcc/TOOLCHAIN=\/usr/' tools/rbp/setup-sdk.sh
+#sudo sh tools/rbp/setup-sdk.sh
+
+## this disables that configure will run automatically with pre-configured values, so we can have fun with them later :-)
+#sed -i 's/cd $(SOURCE); $(CONFIGURE)/#cd $(SOURCE); $(CONFIGURE)/' tools/rbp/depends/xbmc/Makefile 
+
+##this will run bootstrap and build some stuff
+#make -C tools/rbp/depends/xbmc/
+
+## install libdcadec
+- make -C tools/depends/target/libdcadec PREFIX=/usr/local
+
+## install crossguid
+- make -C tools/depends/target/crossguid PREFIX=/usr/local
+
+## Kodi 16 configure
+FFMPEG_OPTS="--cpu=cortex-a7" \
+\
+LDFLAGS="-L/opt/vc/lib" \
+\
+CFLAGS="-I/opt/vc/include/ -I/opt/vc/include/interface/vcos/pthreads -I/opt/vc/include/interface/vmcs_host/linux -mfloat-abi=hard -mcpu=cortex-a7 -mfpu=neon-vfpv4" \
+\
+CXXFLAGS="-I/opt/vc/include/ -I/opt/vc/include/interface/vcos/pthreads -I/opt/vc/include/interface/vmcs_host/linux -mfloat-abi=hard -mcpu=cortex-a7 -mfpu=neon-vfpv4" \
+\
+./configure --prefix=/opt/carpc --enable-debug --enable-optimizations --disable-gl --enable-gles --disable-vdpau --disable-vaapi --disable-openmax --disable-profiling --disable-x11 --disable-cec --enable-ccache --enable-alsa --disable-dbus --enable-pulse --enable-ssh --enable-samba --enable-nfs --enable-upnp --disable-avahi --enable-mysql --disable-webserver --disable-optical-drive --enable-lirc --enable-libusb --enable-airplay --enable-player=omxplayer --with-platform=raspberry-pi2
+
+## Kodi 16 configuration
+
+------------------------
+  Kodi Configuration:
+------------------------
+  Kodi Version:	16.0-BETA1
+  git Rev.:	20151111-c3b3262
+  Debugging:	Yes
+  Profiling:	No
+  Optimization:	Yes
+  SWIG Available:	Yes
+  JRE Available:	Yes
+  Doxygen Available:	Yes
+  Crosscomp.:	No
+  target ARCH:	arm
+  target CPU:	arm1176jzf-s
+  OpenGLES:	Yes
+  ALSA:		Yes
+  DBUS:		No
+  VDPAU:	No
+  VAAPI:	No
+  VTBDecoder:	No
+  OpenMax:	No
+  Joystick:	No
+  Touch skin:	No
+  X11:		No
+  Wayland:	No
+  Bluray:	No
+  TexturePacker:Yes
+  MID Support:	No
+  ccache:	Yes
+  ALSA Support:	Yes
+  PulseAudio:	Yes
+  DVDCSS:	Yes
+  Google Test Framework Configured:	Yes
+  Google Breakpad Configured:	No
+  Avahi:	No
+  mDNSEmbedded:	No
+  Non-free:	Yes
+  ASAP Codec:	No
+  MySQL:	Yes
+  Webserver:	No
+  libssh support:	Yes
+  libRTMP support:	No
+  libsmbclient support:	Yes
+  libnfs client support:Yes
+  libgif support:	Yes
+  AirPlay support:	Yes
+  AirTunes support (libshairplay):	Yes
+  UPnP support:		Yes
+  Optical drive:	No
+  libudev support:	Yes
+  libusb support:	No
+  libcec support:	Yes
+  libcap support:	Yes
+  additional players:	Yes, omxplayer
+  additional codecs:	No
+  prefix:	/opt/carpc
+------------------------
+
+
+
+## compiling only on 3 cores, takes 1- 2 hours, seems more stable; set -j4 to use all 4 cores etc. but ssh/wifi/etc may break or the pi will simply run out of memory
+## you have to deceide, eg. building over night just use 'make -j1' - it will run through
+## just run again, as long as it compiles it is much faster but you have to re-run 'make' again, I would suggest lowering '-jX' evrytime this happens 
+## maybe we should increase swapfile for that. Read/Write on sdcard vs multi-cores; who wins? :-)
+make -j3
+
+
+
+##################################################################################
+## install kodi-platform
+
+git clone https://github.com/xbmc/kodi-platform.git
+cd kodi-platform
+cmake -DCMAKE_INSTALL_PREFIX=/usr/local
+make && sudo make install
+
+##################################################################################
+original source: https://drive.google.com/file/d/0B8nSlx6Q6IoQb2gzLTJQRXlCdzA/view
+##################################################################################
+
+#### this was done on a fresh 2015-05-05-raspbian.img, internet connection required
+#### this is quite exhausting for your sdcard; only of concern when compiling often I would say (compiling and git cloning about 30 times from scratch did destroy one old micro sdcard of me)
+
+## install some libs and new compiler
+sudo apt-get update
+
+sudo apt-get install libboost1.50-all swig curl libgnutls-dev libxml2-dev libxslt1-dev libfreetype6-dev libfontconfig1-dev libfribidi-dev libmpeg2-4-dev libmad0-dev libjpeg8-dev libsamplerate0-dev libogg-dev libvorbis-dev libflac-dev libtiff4-dev liblzo2-dev cmake zip unzip libsqlite3-dev libpng12-dev libpcre3-dev libjasper-dev libsdl1.2-dev libsdl-image1.2-dev libass-dev libmodplug-dev libcdio-dev libtinyxml2-dev libyajl-dev libgpg-error-dev libgcrypt11-dev libmicrohttpd-dev autoconf libtool autopoint libudev-dev python-dev python-imaging libmysqlclient-dev libcurl4-gnutls-dev libbz2-dev libtinyxml-dev libssh-dev libxrandr-dev libsmbclient-dev libcap-dev gawk gperf debhelper libiso9660-dev liblockdev1-dev ccache gcc-4.8 g++-4.8
+
+## setup new compiler as default for convenience (pre-installed 4.6 does not support cortex-a7 and neon stuff) 
+sudo rm /usr/bin/gcc
+sudo rm /usr/bin/g++
+
+sudo ln -s /usr/bin/gcc-4.8 /usr/bin/gcc
+sudo ln -s /usr/bin/g++-4.8 /usr/bin/g++
+
+# check version of compilers, should return 4.8 for both
+echo; gcc --version; echo; g++ --version; 
+
+## if you need to go back to preinstalled gcc-4.6 and g++-4.6 just replace 4.8 with 4.6 and run again
+
+#### now decide which source code of kodi we download to compile
+## 1) official kodi 15 Isengard
+git clone -b Isengard git://github.com/xbmc/xbmc.git
+
+## alternatives are:
+# 2) this is Kodi 15 alpha with newest raspberry pi (2) fixes from popcornmix, which is also used for openelec testbuilds, BUT need special libcec AND kodi sould be build with dependencies!
+git clone -b newclock4 https://github.com/popcornmix/xbmc.git
+## 3)  official master branch, atm kodi 16 alpha
+#git clone git://github.com/xbmc/xbmc.git
+
+#### build new libcec required for kodi (if you don't want to control kodi with your tv remote, skip this)
+## for 'bleeding edge' popcornmix newclock4 branch of kodi use 'git clone -b libcec-2.2.0 https://github.com/popcornmix/libcec.git' or build kodi with dependencies
+## this is official libcec:
+git clone --recursive git://github.com/Pulse-Eight/libcec.git
+
+##build libplatform
+cd libcec/src/platform
+mkdir build
+cd build
+cmake ..
+make
+sudo make install
+cd
+
+##build libcec
+cd libcec
+mkdir build
+cd build
+cmake -DRPI_INCLUDE_DIR=/opt/vc/include -DRPI_LIB_DIR=/opt/vc/lib ..
+make -j4
+sudo make install
+cd
+
+#### do yourself a favor and do not install libtag-dev from (wheezy/raspbian) repo, ./configure likes (very old) libtag from repo, but it breaks the build
+#### more info http://forum.kodi.tv/showthread.php?tid=143269 
+#### instead build included libtag
+cd xbmc/lib/taglib
+make -j4
+sudo make install
+cd
+
+#### Build and install kodi
+## prepare compilation, generate configure files, etc.
+cd xbmc
+./bootstrap
+
+## in case we did something wrong before and need to re-run bootstrap or want an 'untouched' ~/xbmc folder, run inside ~/xbmc :
+# git clean -xfd && git reset --hard
+
+### run '~/xbmc/configure' with new compiler flags for pi 2 
+### takes some time due building ffmpeg (about 20 minutes),
+### if you don't want to control kodi with your tv remote, remove '--enable-libcec'
+### if using newclock4 branch, use 'with-platform=raspberry-pi2' (instead of ..-pi)
+CFLAGS="-I/opt/vc/include/ -I/opt/vc/include/interface/vcos/pthreads -I/opt/vc/include/interface/vmcs_host/linux -mfloat-abi=hard -mcpu=cortex-a7 -mfpu=neon-vfpv4" CXXFLAGS="-I/opt/vc/include/ -I/opt/vc/include/interface/vcos/pthreads -I/opt/vc/include/interface/vmcs_host/linux -mfloat-abi=hard -mcpu=cortex-a7 -mfpu=neon-vfpv4" LDFLAGS="-L/opt/vc/lib" FFMPEG_OPTS="--cpu=cortex-a7" ./configure --disable-gl --enable-gles --with-platform=raspberry-pi --disable-x11 --disable-vaapi --disable-vdpau --disable-avahi --enable-libcec --disable-pulse --disable-projectm --disable-optical-drive --disable-dvdcss --disable-vtbdecoder --enable-alsa --enable-player=omxplayer
+
+# 'FFMPEG_OPTS="use-cpu=cortex-a7"' prevents ffmpeg from auto-selecting '-march=armv7-a' which doesn't like '-mcpu=cortex-a7'
+
+## compiling only on 3 cores, takes 1- 2 hours, seems more stable; set -j4 to use all 4 cores etc. but ssh/wifi/etc may break or the pi will simply run out of memory
+## you have to deceide, eg. building over night just use 'make -j1' - it will run through
+## just run again, as long as it compiles it is much faster but you have to re-run 'make' again, I would suggest lowering '-jX' evrytime this happens 
+## maybe we should increase swapfile for that. Read/Write on sdcard vs multi-cores; who wins? :-)
+make -j3
+
+## and install
+sudo make install
+###
+
+## make keyboard work for non-root eg inside search-fields for user 'pi'
+sudo usermod -aG tty pi
+sudo su -c 'echo "KERNEL==\"tty[0-9]*\", GROUP=\"tty\", MODE=\"0660\"" >> /etc/udev/rules.d/99-input.rules'
+
+## make basic start script, TODO ideally stop lightdm before kodi starts and probably much more needed
+## you need to run 'fbset -depth 8 && fbset -depth 16' after exiting kodi, else blank screen only
+## create very basic script called 'startkodi'
+sudo su -c 'echo "kodi" >> /usr/local/bin/startkodi'
+sudo su -c 'echo "fbset -depth 8 && fbset -depth 16" >> /usr/local/bin/startkodi'
+sudo chmod +x /usr/local/bin/startkodi
+
+###### give gpu more ram now that we actually want to run kodi ###### 
+grep -q '^gpu_mem=' /boot/config.txt && sudo sed -i '/^gpu_mem=/c gpu_mem=128' /boot/config.txt || sudo echo 'gpu_mem=128' >> /boot/config.txt
+## reboot
+sudo reboot
+
+## use 'startkodi' to start kodi
+
+## how to update kodi:
+cd xbmc
+git clean -xfd
+git reset --hard
+git pull --rebase
+## build and install again with 'bootstrap, configure, make, make install' the same way you did before 
+
+###********** TODO: **********************************************************************************************
+### start/stop script for kodi, run as a service? 
+### double check configure settings
+### TODO use gcc 4.9 (not in wheezy/raspbian repo) and -march=armv7ve  [not really needed]
+
+#************ some additional info *******************************************************************************
+## according to http://community.arm.com/groups/tools/blog/2013/04/15/arm-cortex-a-processors-and-gcc-command-lines
+## ideally we would use '-mcpu=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard' everywhere
+## when we use -mcpu=cortex-a7 it conflicts with ffmpeg, which automatically selects -march=armv7-a, I really don't want to mess with configure files of ffmpeg # solved?
+## they probably do this for good reason. If I understand https://gcc.gnu.org/onlinedocs/gcc/ARM-Options.html correctly, march+mtune would override mcpu
+## simple compile test shows that described behaviour
+## so we could use whatever we think is best for kodi, and ffmpeg overrides it nontheless (but who knows - conflicting compiler messages do not look healthy)
+## I guess this will be fixed in near future # yes it will be with gcc4.9 and -march=armv7e
+
+## other possibility would be to use different flags, eg -march=amv7-a instead of -mcpu=cortex-a7
+## more about 'march vs mcpu': http://forum.dlang.org/thread/mailman.1900.1380733301.1719.digitalmars-d-ldc@puremagic.com
+
+#************ obsolete stuff?!************************************************************************************
+## is this still needed when compiling on the pi itself? hopefully not :-D
+## very confusing with hardcoded armv6 cflags in tools/buildsteps/rbpi/configure-depends and somewehere else I forgot
+## we build locally
+#sed -i 's/USE_BUILDROOT=1/USE_BUILDROOT=0/' tools/rbp/setup-sdk.sh
+#sed -i 's/TOOLCHAIN=\/usr\/local\/bcm-gcc/TOOLCHAIN=\/usr/' tools/rbp/setup-sdk.sh
+#sudo sh tools/rbp/setup-sdk.sh
+
+## this disables that configure will run automatically with pre-configured values, so we can have fun with them later :-)
+#sed -i 's/cd $(SOURCE); $(CONFIGURE)/#cd $(SOURCE); $(CONFIGURE)/' tools/rbp/depends/xbmc/Makefile 
+
+##this will run bootstrap and build some stuff
+#make -C tools/rbp/depends/xbmc/
+*******************************************************************************************************************
+
+### old configure, compiler flags for pi 2, taken from https://github.com/archlinuxarm/PKGBUILDs/blob/master/alarm/kodi-rbp/PKGBUILD
+##CFLAGS="-Ofast -fexcess-precision=fast -mfloat-abi=hard -mabi=aapcs-linux -pipe -fstack-protector --param=ssp-buffer-size=4 -D_FORTIFY_SOURCE=1 -I/opt/vc/include/ -I/opt/vc/include/interface/vcos/pthreads -I/opt/vc/include/interface/vmcs_host/linux -mcpu=cortex-a7 -mtune=cortex-a7 -mfpu=neon-vfpv4 -mvectorize-with-neon-quad" CXXFLAGS="-Ofast -fexcess-precision=fast -mfloat-abi=hard -mabi=aapcs-linux -pipe -fstack-protector --param=ssp-buffer-size=4 -D_FORTIFY_SOURCE=1 -I/opt/vc/include/ -I/opt/vc/include/interface/vcos/pthreads -I/opt/vc/include/interface/vmcs_host/linux -mcpu=cortex-a7 -mtune=cortex-a7 -mfpu=neon-vfpv4 -mvectorize-with-neon-quad" LDFLAGS="-L/opt/vc/lib" ./configure --disable-gl --enable-gles --with-platform=raspberry-pi --disable-x11 --disable-vaapi --disable-vdpau --disable-avahi --enable-libcec --disable-pulse --disable-projectm --disable-optical-drive --disable-dvdcss --disable-vtbdecoder --enable-alsa --enable-player=omxplayer --enable-ccache
+
+## Kodi 17
+
+ - git clone https://github.com/alfistird/xbmc-holzingerm.git xbmc-17	# for Kodi 17
+ - cd xbmc-17
+
+ - sed -i 's/USE_BUILDROOT=1/USE_BUILDROOT=0/' tools/rbp/setup-sdk.sh
+ - sed -i 's/TOOLCHAIN=\/usr\/local\/bcm-gcc/TOOLCHAIN=\/usr/' tools/rbp/setup-sdk.sh
+ - sudo sh tools/rbp/setup-sdk.sh
+
+## this disables that configure will run automatically with pre-configured values, so we can have fun with them later :-)
+ - sed -i 's/cd $(SOURCE); $(CONFIGURE)/#cd $(SOURCE); $(CONFIGURE)/' tools/rbp/depends/xbmc/Makefile 
+
+##this will run bootstrap and build some stuff
+ - make -C tools/rbp/depends/xbmc/
+
+## install libdcadec
+ - make -C tools/depends/target/libdcadec PREFIX=/usr/local
+
+## install crossguid
+ - make -C tools/depends/target/crossguid PREFIX=/usr/local
+
+## Kodi 17 configure
+FFMPEG_OPTS="--cpu=cortex-a7" LDFLAGS="-L/opt/vc/lib" CFLAGS="-I/opt/vc/include/ -I/opt/vc/include/interface/vcos/pthreads -I/opt/vc/include/interface/vmcs_host/linux -mfloat-abi=hard -mcpu=cortex-a7 -mfpu=neon-vfpv4" CXXFLAGS="-I/opt/vc/include/ -I/opt/vc/include/interface/vcos/pthreads -I/opt/vc/include/interface/vmcs_host/linux -mfloat-abi=hard -mcpu=cortex-a7 -mfpu=neon-vfpv4" ./configure --prefix=/opt/carpc --enable-debug --enable-optimizations --disable-gl --enable-gles --disable-vdpau --disable-vaapi --disable-openmax --disable-profiling --disable-x11 --enable-ccache --enable-alsa --disable-dbus --enable-pulse --enable-ssh --enable-samba --enable-nfs --enable-upnp --disable-avahi --enable-mysql --disable-webserver --disable-optical-drive --enable-lirc --enable-libusb --enable-airplay --enable-player=omxplayer --with-platform=raspberry-pi2
+
+FFMPEG_OPTS="--cpu=cortex-a7" \
+\
+LDFLAGS="-L/opt/vc/lib" \
+\
+CFLAGS="-I/opt/vc/include/ -I/opt/vc/include/interface/vcos/pthreads -I/opt/vc/include/interface/vmcs_host/linux -mfloat-abi=hard -mcpu=cortex-a7 -mfpu=neon-vfpv4" \
+\
+CXXFLAGS="-I/opt/vc/include/ -I/opt/vc/include/interface/vcos/pthreads -I/opt/vc/include/interface/vmcs_host/linux -mfloat-abi=hard -mcpu=cortex-a7 -mfpu=neon-vfpv4" \
+\
+./configure \
+--prefix=/opt/carpc \
+--enable-debug \
+--enable-optimizations \
+--disable-gl \
+--enable-gles \
+--disable-vdpau \
+--disable-vaapi \
+--disable-openmax \
+--disable-profiling \
+--disable-x11 \
+--enable-ccache \
+--enable-alsa \
+--disable-dbus \
+--enable-pulse \
+--enable-ssh \
+--enable-samba \
+--enable-nfs \
+--enable-upnp \
+--disable-avahi \
+--enable-mysql \
+--disable-webserver \
+--disable-optical-drive \
+--enable-lirc \
+--enable-libusb \
+--enable-airplay \
+--enable-player=omxplayer \
+--with-platform=raspberry-pi2
+
+## Kodi 17 configuration
+
+## compiling only on 3 cores, takes 1- 2 hours, seems more stable; set -j4 to use all 4 cores etc. but ssh/wifi/etc may break or the pi will simply run out of memory
+## you have to deceide, eg. building over night just use 'make -j1' - it will run through
+## just run again, as long as it compiles it is much faster but you have to re-run 'make' again, I would suggest lowering '-jX' evrytime this happens 
+## maybe we should increase swapfile for that. Read/Write on sdcard vs multi-cores; who wins? :-)
+make -j3
+
 
 
 ##################################################################################
