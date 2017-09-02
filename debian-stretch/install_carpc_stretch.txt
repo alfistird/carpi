@@ -6,9 +6,9 @@
 
  - apt-get install git libssh-4 fbi omxplayer mc samba exfat-fuse exfat-utils dphys-swapfile python-picamera python-smbus python-serial python-pip git git-core unattended-upgrades i2c-tools libyajl2 libmicrohttpd12 libmariadbclient-dev-compat libtinyxml2.6.2v5 libtinyxml2-4 libpcrecpp0v5 libjsoncpp1 libva-x11-1 xdotool gpsd gpsd-clients espeak navit xinit preload libxss1 i3 i3-wm i3lock i3blocks i3status xinit xserver-xorg x11-xserver-utils raspberrypi-sys-mods libglib2.0-bin libgksu2-0 
 
-# download christian brauweiler install script
+# download alfistird install script (forked from christian brauweiler)
 
- - wget https://download.christian-brauweiler.de/RaspberryPi/CarPC/install_carpc_stretch-update.sh
+ - wget https://github.com/alfistird/carpi/blob/master/debian-stretch/install_carpc_stretch-update.sh
 
 # start install script
 

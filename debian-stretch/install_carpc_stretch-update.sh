@@ -22,6 +22,11 @@ fi
 BASEDIR="`cd $0 >/dev/null 2>&1; pwd`" >/dev/null 2>&1
 export DEBIAN_FRONTEND=noninteractive
 
+check_xinit=`dpkg -l | awk '$2=="xinit" { print $3 }'`
+check_i3=`dpkg -l | awk '$2=="i3" { print $3 }'`
+check_xserver-xorg=`dpkg -l | awk '$2=="xserver-xorg" { print $3 }'`
+check_x11-xserver=`dpkg -l | awk '$2=="x11-xserver" { print $3 }'`
+
 check_fbi=`dpkg -l | awk '$2=="fbi" { print $3 }'`
 check_omxplayer=`dpkg -l | awk '$2=="omxplayer" { print $3 }'`
 check_mc=`dpkg -l | awk '$2=="mc" { print $3 }'`
@@ -51,7 +56,6 @@ check_gpsd=`dpkg -l | awk '$2=="gpsd" { print $3 }'`
 check_gpsdclients=`dpkg -l | awk '$2=="gpsd-clients" { print $3 }'`
 check_espeak=`dpkg -l | awk '$2=="espeak" { print $3 }'`
 check_navit=`dpkg -l | awk '$2=="navit" { print $3 }'`
-check_xinit=`dpkg -l | awk '$2=="xinit" { print $3 }'`
 check_preload=`dpkg -l | awk '$2=="preload" { print $3 }'`
 check_libxss1=`dpkg -l | awk '$2=="libxss1" { print $3 }'`
 check_camera=`sudo grep start_x= /boot/config.txt | cut -d "=" -f 2`
@@ -474,6 +478,45 @@ then
     sleep 1
 fi
 
+if [ "$check_i3" == "" ] >/dev/null 2>&1
+then
+    clear
+    echo "---------------------------------------------------------"
+    echo "Installing I3 Window Manager"
+    echo "---------------------------------------------------------"
+    sudo apt-get install --force-yes -q -f -y i3 i3-wm i3lock i3blocks i3status
+    echo "------"
+    echo "Finish"
+    echo "------"
+    sleep 1
+fi
+
+if [ "$check_xserver-xorg" == "" ] >/dev/null 2>&1
+then
+    clear
+    echo "---------------------------------------------------------"
+    echo "Installing Xinit"
+    echo "---------------------------------------------------------"
+    sudo apt-get install --force-yes -q -f -y xserver-xorg
+    echo "------"
+    echo "Finish"
+    echo "------"
+    sleep 1
+fi
+
+if [ "$check_x11-xserver" == "" ] >/dev/null 2>&1
+then
+    clear
+    echo "---------------------------------------------------------"
+    echo "Installing X11 Server"
+    echo "---------------------------------------------------------"
+    sudo apt-get install --force-yes -q -f -y x11-xserver
+    echo "------"
+    echo "Finish"
+    echo "------"
+    sleep 1
+fi
+
 if [ "$check_preload" == "" ] >/dev/null 2>&1
 then
     clear
@@ -704,7 +747,7 @@ clear
 echo "---------------------------------------------------------"
 echo "Cleanup system..."
 echo "---------------------------------------------------------"
-sudo apt-get --force-yes -q -f -y remove --purge minecraft-pi scratch wolfram-engine debian-reference-* epiphany-browser* sonic-pi supercollider* >/dev/null 2>&1
+sudo apt-get --force-yes -q -f -y remove --purge minecraft-pi scratch wolfram-engine debian-reference-* epiphany-browser* sonic-pi supercollider* apt-get purge gnome-icon-theme libgnome-keyring0 libgnome-keyring-common >/dev/null 2>&1
 sudo apt-get --force-yes -q -f -y clean >/dev/null 2>&1
 sudo apt-get --force-yes -q -f -y autoremove --purge >/dev/null 2>&1
 sudo rm -r /home/pi/python_games/ >/dev/null 2>&1
