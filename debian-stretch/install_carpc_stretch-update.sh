@@ -24,8 +24,8 @@ export DEBIAN_FRONTEND=noninteractive
 
 check_xinit=`dpkg -l | awk '$2=="xinit" { print $3 }'`
 check_i3=`dpkg -l | awk '$2=="i3" { print $3 }'`
-check_xserver-xorg=`dpkg -l | awk '$2=="xserver-xorg" { print $3 }'`
-check_x11-xserver=`dpkg -l | awk '$2=="x11-xserver" { print $3 }'`
+check_xserverxorg=`dpkg -l | awk '$2=="xserver-xorg" { print $3 }'`
+check_x11xserver=`dpkg -l | awk '$2=="x11-xserver" { print $3 }'`
 
 check_fbi=`dpkg -l | awk '$2=="fbi" { print $3 }'`
 check_omxplayer=`dpkg -l | awk '$2=="omxplayer" { print $3 }'`
@@ -45,7 +45,7 @@ check_i2ctools=`dpkg -l | awk '$2=="i2c-tools" { print $3 }'`
 check_libssh4=`dpkg -l | awk '$2=="libssh-4:armhf" { print $3 }'`
 check_libyajl2=`dpkg -l | awk '$2=="libyajl2:armhf" { print $3 }'`
 check_libmicrohttpd12=`dpkg -l | awk '$2=="libmicrohttpd12" { print $3 }'`
-check_libmariadbclient-dev-compat=`dpkg -l | awk '$2=="libmariadbclient-dev-compat:armhf" { print $3 }'`
+check_libmariadbclientdevcompat=`dpkg -l | awk '$2=="libmariadbclient-dev-compat:armhf" { print $3 }'`
 check_libtinyxml=`dpkg -l | awk '$2=="libtinyxml2.6.2:armhf" { print $3 }'`
 check_libtinyxml2=`dpkg -l | awk '$2=="libtinyxml2-4:armhf" { print $3 }'`
 check_libpcrecpp0v5=`dpkg -l | awk '$2=="libpcrecpp0v5:armhf" { print $3 }'`
@@ -152,7 +152,7 @@ then
     sleep 1
 fi
 
-if [ "$check_libmariadbclient-dev-compat" == "" ] >/dev/null 2>&1
+if [ "$check_libmariadbclientdevcompat" == "" ] >/dev/null 2>&1
 then
     clear
     echo "---------------------------------------------------------"
@@ -491,7 +491,7 @@ then
     sleep 1
 fi
 
-if [ "$check_xserver-xorg" == "" ] >/dev/null 2>&1
+if [ "$check_xserverxorg" == "" ] >/dev/null 2>&1
 then
     clear
     echo "---------------------------------------------------------"
@@ -504,7 +504,7 @@ then
     sleep 1
 fi
 
-if [ "$check_x11-xserver" == "" ] >/dev/null 2>&1
+if [ "$check_x11xserver" == "" ] >/dev/null 2>&1
 then
     clear
     echo "---------------------------------------------------------"
